@@ -26,51 +26,9 @@ TEAM_DATA = load_json("teams.json")["teams"]
 TEAM_NAMES = {team["code"]: team["id"] for team in TEAM_DATA}
 
 
-def get_input_key():
-    """Input API key and validate"""
-    click.secho("No API key found!", fg="yellow", bold=True)
-    click.secho("Please visit {0} and get an API token.".format(BASE_URL),
-                fg="yellow", bold=True)
-    while True:
-        confkey = click.prompt(click.style("Enter API key",
-                                           fg="yellow", bold=True))
-        if len(confkey) == 32:  # 32 chars
-            try:
-                int(confkey, 16)  # hexadecimal
-            except ValueError:
-                click.secho("Invalid API key", fg="red", bold=True)
-            else:
-                break
-        else:
-            click.secho("Invalid API key", fg="red", bold=True)
-    return confkey
-
-
 def load_config_key():
-    """Load API key from config file, write if needed"""
     global api_token
-    try:
-        api_token = os.environ['SOCCER_CLI_API_TOKEN']
-    except KeyError:
-        home = os.path.expanduser("~")
-        config = os.path.join(home, ".soccer-cli.ini")
-        if not os.path.exists(config):
-            with open(config, "w") as cfile:
-                key = get_input_key()
-                cfile.write(key)
-        else:
-            with open(config, "r") as cfile:
-                key = cfile.read()
-        if key:
-            api_token = key
-        else:
-            os.remove(config)  # remove 0-byte file
-            click.secho('No API Token detected. '
-                        'Please visit {0} and get an API Token, '
-                        'which will be used by Soccer CLI '
-                        'to get access to the data.'
-                        .format(BASE_URL), fg="red", bold=True)
-            sys.exit(1)
+    api_token = "Enter API Key"
     return api_token
 
 
@@ -248,15 +206,6 @@ def main(league, time, standings, team, live, use12hour, players, output_format,
             raise IncorrectParametersException('Printing output to stdout and '
                                                'saving to a file are mutually exclusive')
         writer = get_writer(output_format, output_file)
-
-        if listcodes:
-            list_team_codes()
-            return
-
-        if live:
-            get_live_scores(writer, use12hour)
-            return
-
         if standings:
             if not league:
                 raise IncorrectParametersException('Please specify a league. '
