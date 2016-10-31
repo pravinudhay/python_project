@@ -1,0 +1,22 @@
+{  
+  "teams":[  
+    {  
+      "id":"61",
+      "league":{  
+        "id":398,
+        "name":"Premier League"
+      },
+      "code":"CFC",
+      "name":"Chelsea FC"
+    },
+    {  
+      "id":"78",
+      "league":{  
+        "id":399,
+        "name":"La Liga"
+      },
+      "code":"ATM",
+      "name":"Club Atl\u00e9tico de Madrid"
+    }
+  ]
+}
